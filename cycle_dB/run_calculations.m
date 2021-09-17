@@ -21,31 +21,31 @@ selection_intensities = 0.001:0.001:3.999;
 social_good = 'ff';
 
 % fixation probabilities of producers
-fixation_probabilities_C = zeros(1, length(selection_intensities));
+fpC = zeros(1, length(selection_intensities));
 % fixation probabilities of non-producers
-fixation_probabilities_D = zeros(1, length(selection_intensities));
+fpD = zeros(1, length(selection_intensities));
 
 % loop through selection intensities. change 'parfor' to 'for' for serial
 % loop.
 parfor i = 1:length(selection_intensities)
-    intensity = selection_intensities(i);
+    delta = selection_intensities(i);
     % initialize (empty) transition matrix
     transition_matrix = [];
     if strcmp(social_good, 'pp')
-        transition_matrix = build_matrix_pp(N, b, c, intensity);
+        transition_matrix = build_matrix_pp(N, b, c, delta);
     elseif strcmp(social_good, 'cf')
-        transition_matrix = build_matrix_cf(N, b, c, intensity);
+        transition_matrix = build_matrix_cf(N, b, c, delta);
     elseif strcmp(social_good, 'ff')
-        transition_matrix = build_matrix_ff(N, b, c, intensity);
+        transition_matrix = build_matrix_ff(N, b, c, delta);
     else
         error('Unrecognized social good.');
     end
-    fixation_probabilities_C(i) = fixation_probability(1, N, states, transition_matrix);
-    fixation_probabilities_D(i) = fixation_probability(N-1, 0, states, transition_matrix);
+    fpC(i) = fixation_probability(1, N, states, transition_matrix);
+    fpD(i) = fixation_probability(N-1, 0, states, transition_matrix);
 end
 
 % plot results
-plot(selection_intensities, fixation_probabilities_D, 'Color', [0.6, 0, 0], 'LineWidth', 2);
+plot(selection_intensities, fpD, 'Color', [0.6, 0, 0], 'LineWidth', 2);
 hold on;
-plot(selection_intensities, fixation_probabilities_C, 'Color', [0, 0, 0.6], 'LineWidth', 2);
+plot(selection_intensities, fpC, 'Color', [0, 0, 0.6], 'LineWidth', 2);
 axis square; box on; grid on;

@@ -1,9 +1,9 @@
-function transition_matrix = build_matrix_pp(N, b, c, intensity)
+function transition_matrix = build_matrix_pp(N, b, c, delta)
 % BUILD_MATRIX_PP
 %   BUILD_MATRIX_PP(N, b, c, intensity) takes as input
 %   the population size, N, the benefit of the good, b, the cost of the
-%   good, c, and the selection intensity. The output is the transition
-%   matrix for pp-goods with these parameters on the star.
+%   good, c, and the selection intensity, delta. The output is the
+%   transition matrix for pp-goods with these parameters on the star.
     
     states = cartesian_product(transpose(0:1:1), transpose(0:1:N-1));
     state_count = size(states, 1);
@@ -12,16 +12,15 @@ function transition_matrix = build_matrix_pp(N, b, c, intensity)
     for i=1:state_count
         current_state = states(i, :);
         if current_state(1)==1
-            payoff_hub = current_state(2)*b - c*(N-1);
-            payoffC_leaf = b-c;
-            payoffD_leaf = b;
+            pay_H = current_state(2)*b - c*(N-1);
+            payC_L = b-c;
+            payD_L = b;
         else
-            payoff_hub = current_state(2)*b;
-            payoffC_leaf = -c;
-            payoffD_leaf = 0;
+            pay_H = current_state(2)*b;
+            payC_L = -c;
+            payD_L = 0;
         end
-        F = exp(intensity*([payoff_hub, payoffC_leaf, payoffD_leaf]-...
-            max([payoff_hub, payoffC_leaf, payoffD_leaf])));
+        F = exp(delta*([pay_H, payC_L, payD_L]-max([pay_H, payC_L, payD_L])));
         F(2) = current_state(2)*F(2);
         F(3) = (N-1-current_state(2))*F(3);
         for j=1:state_count

@@ -1,4 +1,4 @@
-function fp = fixation_probability(initial_state, final_state, states, transition_matrix)
+function fp = fixation_probability(initial, final, states, transition_matrix)
 % FIXATION_PROBABILITY
 %   FIXATION_PROBABILITY(initial_state, final_state, transition_matrix)
 %   takes as input an initial state, a final state, and a transition matrix
@@ -7,8 +7,8 @@ function fp = fixation_probability(initial_state, final_state, states, transitio
 
     state_count = size(transition_matrix, 1);
     
-    initial_index = get_index(initial_state, states);
-    final_index = get_index(final_state, states);
+    initial_index = get_index(initial, states);
+    final_index = get_index(final, states);
     
     final_vector = zeros(state_count, 1);
     final_vector(final_index) = 1;

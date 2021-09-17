@@ -1,9 +1,9 @@
-function transition_matrix = build_matrix_cf(N, b, c, intensity)
+function transition_matrix = build_matrix_cf(N, b, c, delta)
 % BUILD_MATRIX_CF
 %   BUILD_MATRIX_CF(N, b, c, intensity) takes as input
 %   the population size, N, the benefit of the good, b, the cost of the
-%   good, c, and the selection intensity. The output is the transition
-%   matrix for cf-goods with these parameters on the star.
+%   good, c, and the selection intensity, delta. The output is the
+%   transition matrix for cf-goods with these parameters on the star.
     
     states = cartesian_product(transpose(0:1:1), transpose(0:1:N-1));
     state_count = size(states, 1);
@@ -13,19 +13,19 @@ function transition_matrix = build_matrix_cf(N, b, c, intensity)
         current_state = states(i, :);
         for leaf_recipient=1:N-1
             if current_state(1)==1
-                payoff_hub = current_state(2)*b - c;
-                payoffC_leaf = -c;
-                payoffD_leaf = 0;
+                pay_H = current_state(2)*b - c;
+                payC_L = -c;
+                payD_L = 0;
                 if leaf_recipient<=current_state(2)
-                    payoff_leaf_recipient = b-c;
-                    F = exp(intensity*([payoff_hub, payoffC_leaf, payoffD_leaf, payoff_leaf_recipient]-...
-                        max([payoff_hub, payoffC_leaf, payoffD_leaf, payoff_leaf_recipient])));
+                    pay_L_recipient = b-c;
+                    F = exp(delta*([pay_H, payC_L, payD_L, pay_L_recipient]-...
+                        max([pay_H, payC_L, payD_L, pay_L_recipient])));
                     F(2) = (current_state(2)-1)*F(2);
                     F(3) = (N-1-current_state(2))*F(3);
                 else
-                    payoff_leaf_recipient = b;
-                    F = exp(intensity*([payoff_hub, payoffC_leaf, payoffD_leaf, payoff_leaf_recipient]-...
-                        max([payoff_hub, payoffC_leaf, payoffD_leaf, payoff_leaf_recipient])));
+                    pay_L_recipient = b;
+                    F = exp(delta*([pay_H, payC_L, payD_L, pay_L_recipient]-...
+                        max([pay_H, payC_L, payD_L, pay_L_recipient])));
                     F(2) = current_state(2)*F(2);
                     F(3) = (N-2-current_state(2))*F(3);
                 end
@@ -50,11 +50,11 @@ function transition_matrix = build_matrix_cf(N, b, c, intensity)
                     end
                 end
             else
-                payoff_hub = current_state(2)*b;
-                payoffC_leaf = -c;
-                payoffD_leaf = 0;
-                F = exp(intensity*([payoff_hub, payoffC_leaf, payoffD_leaf]-...
-                    max([payoff_hub, payoffC_leaf, payoffD_leaf])));
+                pay_H = current_state(2)*b;
+                payC_L = -c;
+                payD_L = 0;
+                F = exp(delta*([pay_H, payC_L, payD_L]-...
+                    max([pay_H, payC_L, payD_L])));
                 F(2) = current_state(2)*F(2);
                 F(3) = (N-1-current_state(2))*F(3);
                 for j=1:state_count
